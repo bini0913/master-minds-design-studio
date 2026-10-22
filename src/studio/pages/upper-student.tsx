@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const upperNav = [
-  { id: "tier-grade9-12", label: "Home", icon: GraduationCap },
+  { id: "upper-student-home", label: "Home", icon: GraduationCap },
   { id: "study-mode", label: "Study", icon: Brain },
   { id: "multiplayer-lobby", label: "Compete", icon: Swords },
   { id: "academic-prep-hub", label: "Academic Prep", icon: BookOpen },
@@ -29,7 +29,7 @@ function QuickAction({ icon: I, title, detail, onClick, tone = "blue" }: { icon:
 
 export function UpperStudentDashboard() {
   const go=useGo();
-  return <AppFrame nav={upperNav} active="tier-grade9-12" title="Your learning, in focus" subtitle="Grade 11 · Natural Science · Welcome back, Amara" actions={<Pill tone="green"><span className="h-1.5 w-1.5 rounded-full bg-success"/> On track</Pill>}>
+  return <AppFrame nav={upperNav} active="upper-student-home" title="Your learning, in focus" subtitle="Grade 11 · Natural Science · Welcome back, Amara" actions={<Pill tone="green"><span className="h-1.5 w-1.5 rounded-full bg-success"/> On track</Pill>}>
     <div className="mx-auto max-w-[1440px] space-y-5">
       <section className="relative overflow-hidden rounded-3xl bg-hero p-5 text-navy-foreground sm:p-7 xl:p-8">
         <div className="pointer-events-none absolute -right-8 -top-10 h-48 w-48 rounded-full border-[28px] border-white/5 sm:h-64 sm:w-64"/>
