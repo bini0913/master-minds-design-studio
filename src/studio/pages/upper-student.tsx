@@ -13,7 +13,7 @@ const upperNav = [
   { id: "upper-student-home", label: "Home", icon: GraduationCap },
   { id: "study-mode-plus", label: "Study", icon: Brain },
   { id: "multiplayer-arena", label: "Compete", icon: Swords },
-  { id: "academic-prep-hub", label: "Academic Prep", icon: BookOpen },
+  { id: "academic-prep-hub", label: "Prep", icon: BookOpen },
 ];
 
 const upperMobileMore = [
@@ -21,7 +21,6 @@ const upperMobileMore = [
   { id: "tournament-center", label: "Tournaments", icon: Trophy },
   { id: "friends", label: "Friends", icon: Users },
   { id: "leaderboard", label: "Leaderboard", icon: Medal },
-  { id: "notifications", label: "Notifications", icon: MessageCircle },
   { id: "enhanced-settings", label: "Settings & accessibility", icon: ShieldCheck },
 ];
 
