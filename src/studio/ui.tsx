@@ -1,8 +1,8 @@
-import { createContext, useContext, type ReactNode, type ButtonHTMLAttributes } from "react";
+import { createContext, useContext, useState, type ReactNode, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
-import { Bell, Search, Sparkles } from "lucide-react";
+import { Bell, ChevronRight, MoreHorizontal, Search, Sparkles } from "lucide-react";
 
 export const NavCtx = createContext<(id: string) => void>(() => {});
 export const useGo = () => useContext(NavCtx);
@@ -107,10 +107,13 @@ export function Logo({ light }: { light?: boolean }) {
 export type NavItem = { id: string; label: string; icon: LucideIcon };
 
 /** In-mockup application shell (sidebar + topbar) used by most app pages. */
-export function AppFrame({ nav, active, title, subtitle, children, role = "Student", actions }: {
-  nav: NavItem[]; active: string; title: string; subtitle?: string; children: ReactNode; role?: string; actions?: ReactNode;
+export function AppFrame({ nav, active, title, subtitle, children, role = "Student", actions, mobileMore }: {
+  nav: NavItem[]; active: string; title: string; subtitle?: string; children: ReactNode; role?: string; actions?: ReactNode; mobileMore?: NavItem[];
 }) {
   const go = useGo();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const mobilePrimary = nav.slice(0, 4);
+  const mobileOverflow = mobileMore ?? nav.slice(4);
   return (
     <div className="flex min-h-[760px] bg-canvas">
       <aside className="hidden w-56 shrink-0 flex-col bg-navy p-4 @3xl:flex">
@@ -141,13 +144,22 @@ export function AppFrame({ nav, active, title, subtitle, children, role = "Stude
           </Button>
           <Button variant="ghost" size="icon" title="Profile" aria-label="Profile" onClick={() => go("profile")}><Av name="Amara Tesfaye" /></Button>
         </header>
-        <main className="flex-1 p-5">{children}</main>
-        <nav aria-label="Mockup navigation" className="sticky bottom-0 flex overflow-x-auto border-t bg-card py-2 @3xl:hidden">
-          {nav.map((n) => (
-            <Button variant="ghost" key={n.id + n.label} onClick={() => go(n.id)} className={cn("flex h-auto min-w-16 shrink-0 flex-col items-center gap-0.5 px-2 text-[10px] font-medium", n.id === active ? "text-primary" : "text-muted-foreground")}>
-              <n.icon className="h-5 w-5" />{n.label}
+        <main className="flex-1 p-3 pb-5 sm:p-5">{children}</main>
+        <nav aria-label="Mobile app navigation" className="sticky bottom-0 z-40 flex items-stretch justify-around border-t bg-card/95 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_24px_-20px_rgba(15,23,42,.45)] backdrop-blur @3xl:hidden">
+          {mobilePrimary.map((n) => (
+            <Button variant="ghost" key={n.id + n.label} onClick={() => { setMoreOpen(false); go(n.id); }} aria-current={n.id === active ? "page" : undefined} className={cn("flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[10px] font-semibold", n.id === active ? "bg-primary/10 text-primary" : "text-muted-foreground")}>
+              <n.icon className="h-[18px] w-[18px]" /> <span className="max-w-full truncate">{n.label}</span>
             </Button>
           ))}
+          {mobileOverflow.length > 0 && <div className="relative flex min-w-0 flex-1 justify-center">
+            <Button variant="ghost" aria-expanded={moreOpen} aria-controls="mobile-more-menu" onClick={() => setMoreOpen((open) => !open)} className={cn("flex h-12 w-full flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[10px] font-semibold", moreOpen || mobileOverflow.some((n) => n.id === active) ? "bg-primary/10 text-primary" : "text-muted-foreground")}>
+              <MoreHorizontal className="h-[18px] w-[18px]" /><span>More</span>
+            </Button>
+            {moreOpen && <div id="mobile-more-menu" className="absolute bottom-[calc(100%+0.75rem)] right-0 z-50 max-h-[min(65vh,28rem)] w-[min(19rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border bg-card p-2 shadow-xl" aria-label="More destinations">
+              <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">More destinations</p>
+              {mobileOverflow.map((n) => <button key={n.id + n.label} onClick={() => { setMoreOpen(false); go(n.id); }} aria-current={n.id === active ? "page" : undefined} className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary", n.id === active && "bg-primary/10 text-primary")}><n.icon className="h-4 w-4 shrink-0"/><span className="min-w-0 flex-1">{n.label}</span><ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground"/></button>)}
+            </div>}
+          </div>}
         </nav>
       </div>
     </div>
