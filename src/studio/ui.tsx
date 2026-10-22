@@ -130,7 +130,7 @@ export function AppFrame({ nav, active, title, subtitle, children, role = "Stude
         </nav>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b bg-card px-5 py-3">
+        <header className="flex items-center gap-2 border-b bg-card px-3 py-3 sm:gap-3 sm:px-5">
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-lg font-bold tracking-tight">{title}</h2>
             {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
@@ -138,7 +138,7 @@ export function AppFrame({ nav, active, title, subtitle, children, role = "Stude
           <div className="hidden items-center gap-2 rounded-xl bg-muted px-3 py-2 text-xs text-muted-foreground @2xl:flex">
             <Search className="h-3.5 w-3.5" /> Search anything…
           </div>
-          {actions}
+          {actions && <div className="hidden shrink-0 items-center gap-2 sm:flex">{actions}</div>}
           <Button variant="ghost" size="icon" title="Notifications" aria-label="Notifications" onClick={() => go("notifications")} className="relative shrink-0 grid h-9 w-9 place-items-center rounded-xl hover:bg-muted">
             <Bell className="h-4 w-4" /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-coral" />
           </Button>
