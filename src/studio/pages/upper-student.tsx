@@ -83,7 +83,7 @@ export function AcademicPreparationHub() {
 }
 
 export function StudyModePlus() {
- const [mic,setMic]=useState(true); const [camera,setCamera]=useState(true); const [joined,setJoined]=useState(true); const [running,setRunning]=useState(false); const [seconds,setSeconds]=useState(25*60); const [invite,setInvite]=useState(false); const [chat,setChat]=useState(false); const [message,setMessage]=useState(""); const [tab,setTab]=useState("Session");
+ const [mic,setMic]=useState(true); const [camera,setCamera]=useState(true); const [joined,setJoined]=useState(true); const [running,setRunning]=useState(false); const [seconds,setSeconds]=useState(25*60); const [invite,setInvite]=useState(false); const [message,setMessage]=useState(""); const [tab,setTab]=useState("Session");
  const go=useGo();
  useEffect(()=>{if(!running||seconds<=0)return;const id=window.setInterval(()=>setSeconds(s=>Math.max(0,s-1)),1000);return()=>window.clearInterval(id)},[running,seconds]);
  const time=`${String(Math.floor(seconds/60)).padStart(2,"0")}:${String(seconds%60).padStart(2,"0")}`;
