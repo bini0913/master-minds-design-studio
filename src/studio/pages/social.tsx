@@ -54,7 +54,7 @@ export function Leaderboard() {
     <AppFrame nav={studentNav} active="leaderboard" title="Leaderboard" subtitle="Week 42 · resets in 2d 14h">
       <div className="flex gap-2">{["School", "Regional", "National", "Friends"].map((t) => <button key={t} onClick={() => setTab(t)} className={cn("rounded-full px-4 py-1.5 text-sm font-semibold", tab === t ? "bg-primary text-primary-foreground" : "bg-card border")}>{t}</button>)}</div>
       <div className="mt-6 grid grid-cols-3 items-end gap-3">
-        {[1, 0, 2].map((k) => { const p = people[k]; const h = ["h-40", "h-32", "h-24"][k]; return (
+        {[1, 0, 2].map((k) => { const p = people[k]; if (!p) return null; const h = ["h-40", "h-32", "h-24"][k]; return (
           <div key={k} className="text-center"><Av name={p[0]} tone={p[1]} size={k === 0 ? 64 : 52} /><p className="mt-2 truncate text-sm font-bold">{p[0]}</p><p className="text-xs text-muted-foreground">{p[2].toLocaleString()} XP</p>
             <div className={cn("mt-2 grid place-items-start justify-center rounded-t-2xl pt-3", h, k === 0 ? "bg-goldgrad" : "bg-primary-soft")}>{k === 0 ? <Crown className="h-7 w-7 text-navy" /> : <span className="font-display text-2xl text-primary">{k + 1}</span>}</div></div>
         ); })}

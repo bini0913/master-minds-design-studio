@@ -136,6 +136,7 @@ export function QuizTaking() {
   const [score, setScore] = useState(0);
   const done = i >= qs.length;
   const q = qs[Math.min(i, qs.length - 1)];
+  if (!q) return null;
   return (
     <div className="min-h-[720px] bg-canvas p-5">
       <div className="mx-auto max-w-2xl">
@@ -232,7 +233,7 @@ export function Planner() {
         {days.map((d, i) => (
           <Card key={d} className={cn("min-h-64 p-3", i === 1 && "ring-2 ring-primary")}>
             <p className="text-xs font-bold uppercase text-muted-foreground">{d}</p>
-            <div className="mt-3 space-y-2">{blocks[i].map(([t, tone]) => <div key={t} className={cn("rounded-lg border-l-4 p-2.5 text-sm font-medium", tone === "gray" ? "border-muted-foreground bg-muted" : `border-${tone} bg-${tone}-soft`)}>{t}<p className="text-[11px] font-normal text-muted-foreground">45 min</p></div>)}</div>
+            <div className="mt-3 space-y-2">{(blocks[i] ?? []).map(([t, tone]) => <div key={t} className={cn("rounded-lg border-l-4 p-2.5 text-sm font-medium", tone === "gray" ? "border-muted-foreground bg-muted" : `border-${tone} bg-${tone}-soft`)}>{t}<p className="text-[11px] font-normal text-muted-foreground">45 min</p></div>)}</div>
           </Card>
         ))}
       </div>
@@ -247,7 +248,7 @@ export function Revision() {
       <div className="grid gap-5 @4xl:grid-cols-3">
         <Card className="@4xl:col-span-2"><SectionTitle title="Weak spots" />
           {[["Vectors & resolution", "Physics", 42], ["Organic nomenclature", "Chemistry", 48], ["Logarithms", "Mathematics", 55], ["Genetics crosses", "Biology", 61]].map(([t, s, p]) => (
-            <div key={t as string} className="flex items-center gap-4 border-b py-3 last:border-0"><div className="min-w-0 flex-1"><p className="font-semibold">{t}</p><p className="text-xs text-muted-foreground">{s}</p></div><div className="w-32"><Bar value={p as number} tone={(p as number) < 50 ? "coral" : "gold"} /></div><Btn size="sm" v="secondary">Revise</Btn></div>
+            <div key={t as string} className="flex items-center gap-4 border-b py-3 last:border-0"><div className="min-w-0 flex-1"><p className="font-semibold">{t}</p><p className="text-xs text-muted-foreground">{s}</p></div><div className="w-16 shrink-0 @2xl:w-32"><Bar value={p as number} tone={(p as number) < 50 ? "coral" : "gold"} /></div><Btn size="sm" v="secondary">Revise</Btn></div>
           ))}
         </Card>
         <div className="space-y-4">
@@ -267,7 +268,7 @@ export function Flashcards() {
       <div className="mx-auto max-w-xl text-center">
         <p className="text-sm text-muted-foreground">Card {i + 1} of {cards.length}</p>
         <button onClick={() => setFlip(!flip)} className={cn("mt-4 grid aspect-[3/2] w-full place-items-center rounded-3xl p-8 shadow-elevated transition", flip ? "bg-hero text-navy-foreground" : "bg-card")}>
-          <div><Pill tone={flip ? "gold" : "green"}>{flip ? "Definition" : "Term"}</Pill><p className={cn("mt-4", flip ? "text-lg" : "font-display text-4xl")}>{cards[i][flip ? 1 : 0]}</p><p className="mt-6 text-xs opacity-60">Tap to flip</p></div>
+          <div><Pill tone={flip ? "gold" : "green"}>{flip ? "Definition" : "Term"}</Pill><p className={cn("mt-4", flip ? "text-lg" : "font-display text-3xl")}>{cards[i]?.[flip ? 1 : 0]}</p><p className="mt-6 text-xs opacity-60">Tap to flip</p></div>
         </button>
         <div className="mt-6 grid grid-cols-3 gap-3">
           {[["Again", "danger"], ["Good", "secondary"], ["Easy", "primary"]].map(([l, v]) => <Btn key={l} v={v as "primary"} onClick={() => { setFlip(false); setI((i + 1) % cards.length); }}>{l}</Btn>)}
@@ -284,7 +285,7 @@ export function ExamMode() {
   const fmt = `${Math.floor(sec / 3600)}:${String(Math.floor((sec % 3600) / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
   return (
     <div className="min-h-[720px] bg-canvas">
-      <header className="flex items-center justify-between bg-navy px-5 py-3 text-navy-foreground"><div className="flex items-center gap-2"><Lock className="h-4 w-4" /><b className="text-sm">National Mock Exam · Mathematics</b></div><div className="rounded-lg bg-navy-2 px-3 py-1 font-mono text-lg">{fmt}</div><Btn size="sm" v="danger">Submit</Btn></header>
+      <header className="flex flex-wrap items-center justify-between gap-3 bg-navy px-5 py-3 text-navy-foreground"><div className="flex w-full items-center gap-2 @2xl:w-auto"><Lock className="h-4 w-4" /><b className="text-sm">National Mock Exam · Mathematics</b></div><div className="shrink-0 whitespace-nowrap rounded-lg bg-navy-2 px-3 py-1 font-mono text-lg">{fmt}</div><Btn size="sm" v="danger">Submit</Btn></header>
       <div className="grid gap-5 p-5 @4xl:grid-cols-4">
         <Card className="@4xl:col-span-3 p-7">
           <p className="text-xs font-bold text-muted-foreground">QUESTION {cur} OF 60 · 2 marks</p>
@@ -292,7 +293,7 @@ export function ExamMode() {
           <div className="mt-5 grid gap-2 @2xl:grid-cols-2">{["x = 2", "x = 4", "x = −2", "x = 8"].map((o, k) => <label key={o} className="flex items-center gap-3 rounded-xl border p-4 text-sm"><input type="radio" name="e" defaultChecked={k === 1} />{o}</label>)}</div>
           <div className="mt-6 flex justify-between"><Btn v="outline" onClick={() => setCur(Math.max(1, cur - 1))}>Previous</Btn><Btn v="ghost"><Flag className="h-4 w-4" /> Flag</Btn><Btn onClick={() => setCur(Math.min(60, cur + 1))}>Next</Btn></div>
         </Card>
-        <Card><p className="mb-3 text-sm font-bold">Navigator</p><div className="grid grid-cols-6 gap-1.5 @4xl:grid-cols-5">{Array.from({ length: 30 }, (_, k) => <button key={k} onClick={() => setCur(k + 1)} className={cn("aspect-square rounded-md text-xs font-semibold", k + 1 === cur ? "bg-primary text-primary-foreground" : k < 5 ? "bg-success-soft text-success" : k === 8 ? "bg-gold-soft text-gold" : "bg-muted")}>{k + 1}</button>)}</div>
+        <Card><p className="mb-3 text-sm font-bold">Navigator</p><div className="grid grid-cols-6 gap-1.5 @4xl:grid-cols-5">{Array.from({ length: 60 }, (_, k) => <button key={k} onClick={() => setCur(k + 1)} className={cn("aspect-square rounded-md text-xs font-semibold", k + 1 === cur ? "bg-primary text-primary-foreground" : k < 5 ? "bg-success-soft text-success" : k === 8 ? "bg-gold-soft text-gold" : "bg-muted")}>{k + 1}</button>)}</div>
           <div className="mt-4 space-y-1 text-xs text-muted-foreground"><p>■ Answered 5 · ■ Flagged 1 · ■ Left 54</p></div></Card>
       </div>
     </div>

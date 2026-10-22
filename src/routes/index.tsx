@@ -32,12 +32,14 @@ function Studio() {
   const list = useMemo(() => pages.filter((p) => (cat === "All" || p.category === cat) && p.name.toLowerCase().includes(q.toLowerCase())), [q, cat]);
   const idx = pages.findIndex((p) => p.id === cur);
   const page = pages[idx] ?? pages[0];
-  const step = (d: number) => setCur(pages[(idx + d + pages.length) % pages.length].id);
+  const step = (d: number) => { const next = pages[(idx + d + pages.length) % pages.length]; if (next) go(next.id); };
   const go = (id: string) => {
     if (!pages.some((p) => p.id === id)) return;
     setCur(id);
     setDrawer(false);
   };
+
+  if (!page) return null;
 
   return (
     <div className="flex h-dvh overflow-hidden">
@@ -63,7 +65,7 @@ function Studio() {
           <Button variant="ghost" size="icon" onClick={() => { setOpen(!open); setDrawer(!drawer); }} title="Toggle page sidebar" aria-label="Toggle sidebar"><PanelLeft className="h-4 w-4" /></Button>
           <div className="min-w-0 flex-1"><p data-testid="current-page" className="truncate text-sm font-bold">{page.name}</p><p className="text-xs text-muted-foreground">{page.category} · {idx + 1} / {pages.length}</p></div>
           <div role="group" aria-label="Preview size" className="flex rounded-xl bg-muted p-1">{([["desktop", Monitor], ["tablet", Tablet], ["mobile", Smartphone]] as const).map(([k, I]) => <Button variant="ghost" size="icon" key={k} title={`${k} preview`} aria-pressed={vp === k} aria-label={k} onClick={() => setVp(k)} className={cn("h-8 w-8 rounded-lg", vp === k ? "bg-card text-primary shadow-card" : "text-muted-foreground")}><I className="h-4 w-4" /></Button>)}</div>
-          <div className="hidden gap-1 sm:flex"><Button variant="outline" size="icon" onClick={() => step(-1)} title="Previous page" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></Button><Button variant="outline" size="icon" onClick={() => step(1)} title="Next page" aria-label="Next"><ChevronRight className="h-4 w-4" /></Button></div>
+          <div className="flex gap-1"><Button variant="outline" size="icon" onClick={() => step(-1)} title="Previous page" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></Button><Button variant="outline" size="icon" onClick={() => step(1)} title="Next page" aria-label="Next"><ChevronRight className="h-4 w-4" /></Button></div>
         </header>
         <div key={page.id} className="flex-1 overflow-auto bg-muted p-2 sm:p-5 @container/outer">
           <div data-testid="preview" className="studio-preview @container mx-auto w-full overflow-hidden rounded-xl border bg-background shadow-elevated transition-all" style={{ maxWidth: widths[vp] }}>

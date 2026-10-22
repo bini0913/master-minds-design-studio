@@ -8,7 +8,7 @@ describe("Standalone studio page coverage", () => {
   it.each(required)("registers the requested %s page exactly once", (id) => {
     const matches = pages.filter((page) => page.id === id);
     expect(matches).toHaveLength(1);
-    expect(typeof matches[0].C).toBe("function");
+    expect(typeof matches[0]?.C).toBe("function");
   });
 
   it("uses an individual implementation for every requested screen", () => {
