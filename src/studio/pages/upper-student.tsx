@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Activity, AlarmClock, ArrowDownRight, ArrowRight, ArrowUpRight, Award, BarChart3, BookMarked,
-  BookOpen, Brain, CalendarDays, Camera, CameraOff, Check, CheckCircle2, ChevronDown, ChevronRight,
-  CircleHelp, Clock3, Crown, FileCheck2, FileText, Flame, Flag, GraduationCap, Headphones, Heart,
-  Layers3, Lightbulb, ListChecks, Medal, MessageCircle, Mic, MicOff, MoreHorizontal, Pause, Play,
-  Plus, RotateCcw, Search, Send, Settings2, ShieldCheck, Sparkles, Star, Swords, Target, Timer,
-  Trophy, Users, Video, VideoOff, Volume2, Wallet, X, Zap
+  AlarmClock, ArrowRight, ArrowUpRight, BarChart3, BookMarked, BookOpen, Brain, CalendarDays,
+  Camera, CameraOff, Check, CheckCircle2, ChevronRight, Clock3, FileCheck2, Flame, GraduationCap,
+  Layers3, Lightbulb, Medal, MessageCircle, Mic, MicOff, Pause, Play, Plus, RotateCcw, Search,
+  Send, ShieldCheck, Sparkles, Star, Swords, Target, Trophy, Users, VideoOff, Volume2, Zap
 } from "lucide-react";
 import { AppFrame, Av, Bar, Btn, Card, IconBox, Pill, SectionTitle, Stat, useGo, type Tone } from "../ui";
 import { cn } from "@/lib/utils";
