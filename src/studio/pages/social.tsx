@@ -33,15 +33,19 @@ export function MultiplayerLobby() {
 }
 
 export function Tournaments() {
+  const go = useGo();
+  const [registered, setRegistered] = useState<string[]>([]);
+  const [bracket, setBracket] = useState(false);
   return (
     <AppFrame nav={studentNav} active="leaderboard" title="Tournaments" subtitle="Compete nationally, win real prizes">
       <div className="overflow-hidden rounded-2xl bg-hero p-7 text-navy-foreground">
         <Pill tone="coral">● LIVE</Pill><h3 className="mt-3 font-display text-3xl">National Math Cup 2026</h3><p className="text-navy-muted">Round 3 of 5 · 1,204 players remaining · Prize pool 50,000 ETB</p>
-        <div className="mt-5 flex gap-3"><Btn v="gold"><Trophy className="h-4 w-4" /> Enter round</Btn><Btn v="outline">View bracket</Btn></div>
+        <div className="mt-5 flex flex-wrap gap-3"><Btn v="gold" onClick={() => go("multiplayer-lobby")}><Trophy className="h-4 w-4" /> Enter round</Btn><Btn v="outline" onClick={() => setBracket(!bracket)}>View bracket</Btn></div>
       </div>
+      {bracket && <Card className="mt-4"><SectionTitle title="Quarter finals" /><div className="grid gap-3 @2xl:grid-cols-2">{["Liya vs Dawit", "Amara vs Sara", "Yonas vs Hana", "Abel vs Kaleb"].map((match) => <div key={match} className="rounded-lg border p-3 text-sm font-semibold">{match}<p className="mt-1 text-xs text-muted-foreground">Round 3 · Mathematics</p></div>)}</div></Card>}
       <div className="mt-5 grid gap-4 @3xl:grid-cols-3">
         {[["Physics Grand Prix", "Starts Oct 25", "violet", "2,300 registered"], ["Biology Olympiad", "Starts Nov 2", "green", "1,780 registered"], ["Spelling Bee Jr.", "Starts Nov 9", "gold", "940 registered"]].map(([n, d, t, r]) => (
-          <Card key={n}><IconBox icon={Medal} tone={t as Tone} /><p className="mt-3 font-bold">{n}</p><p className="text-sm text-muted-foreground">{r}</p><div className="mt-4 flex items-center justify-between"><Pill tone="gray"><Calendar className="h-3 w-3" />{d}</Pill><Btn size="sm">Register</Btn></div></Card>
+          <Card key={n}><IconBox icon={Medal} tone={t as Tone} /><p className="mt-3 font-bold">{n}</p><p className="text-sm text-muted-foreground">{r}</p><div className="mt-4 flex flex-wrap gap-2 items-center justify-between"><Pill tone="gray"><Calendar className="h-3 w-3" />{d}</Pill><Btn size="sm" disabled={registered.includes(n ?? "")} onClick={() => n && setRegistered([...registered, n])}>{registered.includes(n ?? "") ? "Registered" : "Register"}</Btn></div></Card>
         ))}
       </div>
     </AppFrame>
