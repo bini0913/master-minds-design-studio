@@ -1,6 +1,6 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+@source "../src";
 @source inline("{bg,text,border}-{blue,green,gold,coral,violet,gray}{,-soft}");
 
 @custom-variant dark (&:is(.dark *));
@@ -118,6 +118,7 @@
   --shadow-card: 0 1px 2px oklch(0.2 0.04 265 / 5%), 0 4px 16px -4px oklch(0.2 0.04 265 / 8%);
   --shadow-elevated: 0 24px 60px -20px oklch(0.2 0.06 265 / 30%);
   --shadow-glow: 0 10px 30px -10px oklch(0.53 0.22 264 / 55%);
+  --overlay: oklch(0.16 0.04 265 / 55%);
 }
 
 @utility bg-hero { background-image: var(--gradient-hero); }
@@ -136,4 +137,15 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }
+  button { cursor: pointer; }
+  input { min-width: 0; }
+  * { letter-spacing: 0; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+}
+
+.studio-backdrop { background: var(--overlay); }
+.studio-backdrop:hover { background: var(--overlay); }
+.studio-preview { overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

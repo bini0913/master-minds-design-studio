@@ -136,6 +136,7 @@ export function QuizTaking() {
   const [score, setScore] = useState(0);
   const done = i >= qs.length;
   const q = qs[Math.min(i, qs.length - 1)];
+  if (!q) return null;
   return (
     <div className="min-h-[720px] bg-canvas p-5">
       <div className="mx-auto max-w-2xl">
@@ -173,20 +174,26 @@ export function QuizTaking() {
 }
 
 export function Library() {
+  const [query, setQuery] = useState("");
+  const [opened, setOpened] = useState<string | null>(null);
+  const go = useGo();
   const books = [["Physics Grade 11", "Textbook", "violet"], ["Biology Grade 11", "Textbook", "green"], ["Math Past Papers 2015–2025", "Exam", "blue"], ["Chemistry Lab Guide", "Guide", "coral"], ["English Grammar Handbook", "Reference", "gold"], ["Civics & Ethics", "Textbook", "gray"]] as const;
   return (
     <AppFrame nav={studentNav} active="library" title="Digital Library" subtitle="1,240 resources aligned to your curriculum">
-      <div className="flex items-center gap-2 rounded-xl border bg-card px-3"><Search className="h-4 w-4 text-muted-foreground" /><input className="h-11 flex-1 bg-transparent text-sm outline-none" placeholder="Search books, notes, past papers…" /></div>
+      <div className="flex items-center gap-2 rounded-xl border bg-card px-3"><Search className="h-4 w-4 text-muted-foreground" /><input aria-label="Search library" value={query} onChange={(e) => setQuery(e.target.value)} className="h-11 flex-1 bg-transparent text-sm outline-none" placeholder="Search books, notes, past papers…" /></div>
+      {opened && <Card className="mt-4"><SectionTitle title={opened} action={<Btn size="sm" v="ghost" aria-label="Close book" onClick={() => setOpened(null)}><X /></Btn>} /><Pill>Chapter 4 · Work, Energy & Power</Pill><h3 className="mt-4 text-xl font-bold">Energy and its transformations</h3><p className="mt-3 text-sm leading-relaxed">Energy is the capacity to do work. Kinetic energy is associated with motion, while potential energy depends on position. The total energy of an isolated system remains constant.</p><p className="mt-3 rounded-lg bg-muted p-4 font-mono text-sm">Kinetic energy = ½ × mass × velocity²</p><Btn size="sm" className="mt-4" onClick={() => go("flashcards")}>Practice this chapter</Btn></Card>}
       <div className="mt-5 grid grid-cols-2 gap-4 @3xl:grid-cols-3 @5xl:grid-cols-6">
-        {books.map(([t, k, tone]) => (
+        {books.filter(([t]) => t.toLowerCase().includes(query.toLowerCase())).map(([t, k, tone]) => (
           <div key={t} className="group">
             <div className={cn("relative aspect-[3/4] overflow-hidden rounded-xl p-3 shadow-card", tone === "gray" ? "bg-muted" : `bg-${tone}-soft`)}>
               <div className="flex h-full flex-col justify-between rounded-lg border-2 border-dashed border-current/20 p-2"><BookOpen className="h-6 w-6 opacity-60" /><p className="font-display text-sm font-semibold leading-tight">{t}</p></div>
             </div>
             <p className="mt-2 truncate text-sm font-semibold">{t}</p><p className="text-xs text-muted-foreground">{k}</p>
+            <Btn size="sm" v="outline" className="mt-2 w-full" onClick={() => setOpened(t)}><BookOpen className="h-3 w-3" />Read</Btn>
           </div>
         ))}
       </div>
+      {!books.some(([t]) => t.toLowerCase().includes(query.toLowerCase())) && <p className="py-8 text-center text-sm text-muted-foreground">No matching books.</p>}
       <Card className="mt-5"><SectionTitle title="Recently opened" />
         {["Ch. 4 – Work, Energy & Power.pdf", "2024 National Exam – Biology.pdf"].map((f) => <div key={f} className="flex items-center gap-3 border-b py-3 last:border-0"><IconBox icon={FileText} tone="blue" size={32} /><span className="flex-1 truncate text-sm">{f}</span><Download className="h-4 w-4 text-muted-foreground" /></div>)}
       </Card>
@@ -224,15 +231,19 @@ export function AITutor() {
 }
 
 export function Planner() {
+  const [adding, setAdding] = useState(false);
+  const [newBlock, setNewBlock] = useState("");
+  const [extra, setExtra] = useState<string[]>([]);
   const days = ["Mon 19", "Tue 20", "Wed 21", "Thu 22", "Fri 23"];
   const blocks: Record<number, [string, Tone][]> = { 0: [["Physics quiz", "violet"], ["Bio flashcards", "green"]], 1: [["Math revision", "blue"]], 2: [["Chem lab prep", "coral"], ["English essay", "gold"]], 3: [["Physics midterm prep", "violet"]], 4: [["Mock exam", "blue"], ["Rest 🎉", "gray"]] };
   return (
-    <AppFrame nav={studentNav} active="planner" title="Study Planner" subtitle="Auto-built around your exam calendar" actions={<Btn size="sm"><Calendar className="h-4 w-4" /> Add block</Btn>}>
+    <AppFrame nav={studentNav} active="planner" title="Study Planner" subtitle="Auto-built around your exam calendar" actions={<Btn size="sm" onClick={() => setAdding(!adding)}><Calendar className="h-4 w-4" /> Add block</Btn>}>
+      {adding && <form onSubmit={(e) => { e.preventDefault(); if (!newBlock.trim()) return; setExtra([...extra, newBlock.trim()]); setNewBlock(""); setAdding(false); }} className="mb-4 flex flex-wrap gap-2"><input autoFocus aria-label="Study block title" placeholder="Thursday study block" value={newBlock} onChange={(e) => setNewBlock(e.target.value)} className="h-10 min-w-0 flex-1 rounded-lg border bg-card px-3 text-sm" /><Btn type="submit">Add</Btn><Btn v="outline" onClick={() => setAdding(false)}>Cancel</Btn></form>}
       <div className="grid gap-3 @3xl:grid-cols-5">
         {days.map((d, i) => (
           <Card key={d} className={cn("min-h-64 p-3", i === 1 && "ring-2 ring-primary")}>
             <p className="text-xs font-bold uppercase text-muted-foreground">{d}</p>
-            <div className="mt-3 space-y-2">{blocks[i].map(([t, tone]) => <div key={t} className={cn("rounded-lg border-l-4 p-2.5 text-sm font-medium", tone === "gray" ? "border-muted-foreground bg-muted" : `border-${tone} bg-${tone}-soft`)}>{t}<p className="text-[11px] font-normal text-muted-foreground">45 min</p></div>)}</div>
+            <div className="mt-3 space-y-2">{(blocks[i] ?? []).map(([t, tone]) => <div key={t} className={cn("rounded-lg border-l-4 p-2.5 text-sm font-medium", tone === "gray" ? "border-muted-foreground bg-muted" : `border-${tone} bg-${tone}-soft`)}>{t}<p className="text-[11px] font-normal text-muted-foreground">45 min</p></div>)}{i === 3 && extra.map((t, k) => <div key={k} className="rounded-lg border-l-4 border-primary bg-primary-soft p-2.5 text-sm font-medium">{t}<p className="text-[11px] text-muted-foreground">45 min</p></div>)}</div>
           </Card>
         ))}
       </div>
@@ -242,16 +253,17 @@ export function Planner() {
 }
 
 export function Revision() {
+  const go = useGo();
   return (
     <AppFrame nav={studentNav} active="quiz-selection" title="Revision Mode" subtitle="Focus on what you're most likely to forget">
       <div className="grid gap-5 @4xl:grid-cols-3">
         <Card className="@4xl:col-span-2"><SectionTitle title="Weak spots" />
           {[["Vectors & resolution", "Physics", 42], ["Organic nomenclature", "Chemistry", 48], ["Logarithms", "Mathematics", 55], ["Genetics crosses", "Biology", 61]].map(([t, s, p]) => (
-            <div key={t as string} className="flex items-center gap-4 border-b py-3 last:border-0"><div className="min-w-0 flex-1"><p className="font-semibold">{t}</p><p className="text-xs text-muted-foreground">{s}</p></div><div className="w-32"><Bar value={p as number} tone={(p as number) < 50 ? "coral" : "gold"} /></div><Btn size="sm" v="secondary">Revise</Btn></div>
+              <div key={t as string} className="flex flex-wrap items-center gap-3 border-b py-3 last:border-0"><div className="min-w-28 flex-1"><p className="font-semibold">{t}</p><p className="text-xs text-muted-foreground">{s}</p></div><div className="w-16 shrink-0 @2xl:w-32"><Bar value={p as number} tone={(p as number) < 50 ? "coral" : "gold"} /></div><Btn size="sm" v="secondary" onClick={() => go("quiz-taking")}>Revise</Btn></div>
           ))}
         </Card>
         <div className="space-y-4">
-          <Card className="bg-hero text-navy-foreground border-0"><RotateCcw className="h-6 w-6" /><p className="mt-3 font-display text-2xl">24 cards due</p><p className="text-sm text-navy-muted">Spaced repetition · ~12 min</p><Btn v="gold" className="mt-4 w-full">Start session</Btn></Card>
+          <Card className="bg-hero text-navy-foreground border-0"><RotateCcw className="h-6 w-6" /><p className="mt-3 font-display text-2xl">24 cards due</p><p className="text-sm text-navy-muted">Spaced repetition · ~12 min</p><Btn v="gold" className="mt-4 w-full" onClick={() => go("flashcards")}>Start session</Btn></Card>
           <Card><SectionTitle title="Retention curve" /><div className="flex h-24 items-end gap-1">{[90, 80, 72, 66, 61, 58, 56, 55].map((h, i) => <div key={i} className="flex-1 rounded-t bg-primary-soft" style={{ height: `${h}%` }} />)}</div></Card>
         </div>
       </div>
@@ -267,7 +279,7 @@ export function Flashcards() {
       <div className="mx-auto max-w-xl text-center">
         <p className="text-sm text-muted-foreground">Card {i + 1} of {cards.length}</p>
         <button onClick={() => setFlip(!flip)} className={cn("mt-4 grid aspect-[3/2] w-full place-items-center rounded-3xl p-8 shadow-elevated transition", flip ? "bg-hero text-navy-foreground" : "bg-card")}>
-          <div><Pill tone={flip ? "gold" : "green"}>{flip ? "Definition" : "Term"}</Pill><p className={cn("mt-4", flip ? "text-lg" : "font-display text-4xl")}>{cards[i][flip ? 1 : 0]}</p><p className="mt-6 text-xs opacity-60">Tap to flip</p></div>
+          <div><Pill tone={flip ? "gold" : "green"}>{flip ? "Definition" : "Term"}</Pill><p className={cn("mt-4", flip ? "text-lg" : "font-display text-3xl")}>{cards[i]?.[flip ? 1 : 0]}</p><p className="mt-6 text-xs opacity-60">Tap to flip</p></div>
         </button>
         <div className="mt-6 grid grid-cols-3 gap-3">
           {[["Again", "danger"], ["Good", "secondary"], ["Easy", "primary"]].map(([l, v]) => <Btn key={l} v={v as "primary"} onClick={() => { setFlip(false); setI((i + 1) % cards.length); }}>{l}</Btn>)}
@@ -278,21 +290,25 @@ export function Flashcards() {
 }
 
 export function ExamMode() {
+  const go = useGo();
+  const [submitted, setSubmitted] = useState(false);
+  const [flagged, setFlagged] = useState<number[]>([9]);
   const [sec, setSec] = useState(5399);
   useEffect(() => { const t = setInterval(() => setSec((s) => Math.max(0, s - 1)), 1000); return () => clearInterval(t); }, []);
   const [cur, setCur] = useState(6);
   const fmt = `${Math.floor(sec / 3600)}:${String(Math.floor((sec % 3600) / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`;
+  if (submitted) return <div className="grid min-h-[720px] place-items-center bg-canvas p-5"><Card className="max-w-md text-center"><IconBox icon={Check} tone="green" /><h2 className="mt-4 font-display text-3xl">Exam submitted</h2><p className="mt-2 text-sm text-muted-foreground">Your practice exam is complete.</p><Btn className="mt-5" onClick={() => go("academic-dashboard")}>Academic dashboard</Btn></Card></div>;
   return (
     <div className="min-h-[720px] bg-canvas">
-      <header className="flex items-center justify-between bg-navy px-5 py-3 text-navy-foreground"><div className="flex items-center gap-2"><Lock className="h-4 w-4" /><b className="text-sm">National Mock Exam · Mathematics</b></div><div className="rounded-lg bg-navy-2 px-3 py-1 font-mono text-lg">{fmt}</div><Btn size="sm" v="danger">Submit</Btn></header>
+      <header className="flex flex-wrap items-center justify-between gap-3 bg-navy px-5 py-3 text-navy-foreground"><div className="flex w-full items-center gap-2 @2xl:w-auto"><Lock className="h-4 w-4" /><b className="text-sm">National Mock Exam · Mathematics</b></div><div className="shrink-0 whitespace-nowrap rounded-lg bg-navy-2 px-3 py-1 font-mono text-lg">{fmt}</div><Btn size="sm" v="danger" onClick={() => setSubmitted(true)}>Submit</Btn></header>
       <div className="grid gap-5 p-5 @4xl:grid-cols-4">
         <Card className="@4xl:col-span-3 p-7">
           <p className="text-xs font-bold text-muted-foreground">QUESTION {cur} OF 60 · 2 marks</p>
           <p className="mt-3 text-lg font-semibold">If log₂(x) + log₂(x − 2) = 3, find x.</p>
           <div className="mt-5 grid gap-2 @2xl:grid-cols-2">{["x = 2", "x = 4", "x = −2", "x = 8"].map((o, k) => <label key={o} className="flex items-center gap-3 rounded-xl border p-4 text-sm"><input type="radio" name="e" defaultChecked={k === 1} />{o}</label>)}</div>
-          <div className="mt-6 flex justify-between"><Btn v="outline" onClick={() => setCur(Math.max(1, cur - 1))}>Previous</Btn><Btn v="ghost"><Flag className="h-4 w-4" /> Flag</Btn><Btn onClick={() => setCur(Math.min(60, cur + 1))}>Next</Btn></div>
+          <div className="mt-6 flex justify-between"><Btn v="outline" onClick={() => setCur(Math.max(1, cur - 1))}>Previous</Btn><Btn v="ghost" onClick={() => setFlagged(flagged.includes(cur) ? flagged.filter((n) => n !== cur) : [...flagged, cur])}><Flag className="h-4 w-4" /> {flagged.includes(cur) ? "Unflag" : "Flag"}</Btn><Btn onClick={() => setCur(Math.min(60, cur + 1))}>Next</Btn></div>
         </Card>
-        <Card><p className="mb-3 text-sm font-bold">Navigator</p><div className="grid grid-cols-6 gap-1.5 @4xl:grid-cols-5">{Array.from({ length: 30 }, (_, k) => <button key={k} onClick={() => setCur(k + 1)} className={cn("aspect-square rounded-md text-xs font-semibold", k + 1 === cur ? "bg-primary text-primary-foreground" : k < 5 ? "bg-success-soft text-success" : k === 8 ? "bg-gold-soft text-gold" : "bg-muted")}>{k + 1}</button>)}</div>
+        <Card><p className="mb-3 text-sm font-bold">Navigator</p><div className="grid grid-cols-6 gap-1.5 @4xl:grid-cols-5">{Array.from({ length: 60 }, (_, k) => <button key={k} onClick={() => setCur(k + 1)} className={cn("aspect-square rounded-md text-xs font-semibold", k + 1 === cur ? "bg-primary text-primary-foreground" : k < 5 ? "bg-success-soft text-success" : k === 8 ? "bg-gold-soft text-gold" : "bg-muted")}>{k + 1}</button>)}</div>
           <div className="mt-4 space-y-1 text-xs text-muted-foreground"><p>■ Answered 5 · ■ Flagged 1 · ■ Left 54</p></div></Card>
       </div>
     </div>

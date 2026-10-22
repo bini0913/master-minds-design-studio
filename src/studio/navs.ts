@@ -57,7 +57,7 @@ export const staffNav = (role: "parent" | "teacher" | "admin" | "manager" | "fin
       { id: "migration-tools", label: "System", icon: Database },
     ],
   };
-  return map[role];
+  return map[role] ?? [];
 };
 
 export const earlyNav: NavItem[] = [

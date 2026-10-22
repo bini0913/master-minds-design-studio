@@ -33,15 +33,19 @@ export function MultiplayerLobby() {
 }
 
 export function Tournaments() {
+  const go = useGo();
+  const [registered, setRegistered] = useState<string[]>([]);
+  const [bracket, setBracket] = useState(false);
   return (
     <AppFrame nav={studentNav} active="leaderboard" title="Tournaments" subtitle="Compete nationally, win real prizes">
       <div className="overflow-hidden rounded-2xl bg-hero p-7 text-navy-foreground">
         <Pill tone="coral">● LIVE</Pill><h3 className="mt-3 font-display text-3xl">National Math Cup 2026</h3><p className="text-navy-muted">Round 3 of 5 · 1,204 players remaining · Prize pool 50,000 ETB</p>
-        <div className="mt-5 flex gap-3"><Btn v="gold"><Trophy className="h-4 w-4" /> Enter round</Btn><Btn v="outline">View bracket</Btn></div>
+        <div className="mt-5 flex flex-wrap gap-3"><Btn v="gold" onClick={() => go("multiplayer-lobby")}><Trophy className="h-4 w-4" /> Enter round</Btn><Btn v="outline" onClick={() => setBracket(!bracket)}>View bracket</Btn></div>
       </div>
+      {bracket && <Card className="mt-4"><SectionTitle title="Quarter finals" /><div className="grid gap-3 @2xl:grid-cols-2">{["Liya vs Dawit", "Amara vs Sara", "Yonas vs Hana", "Abel vs Kaleb"].map((match) => <div key={match} className="rounded-lg border p-3 text-sm font-semibold">{match}<p className="mt-1 text-xs text-muted-foreground">Round 3 · Mathematics</p></div>)}</div></Card>}
       <div className="mt-5 grid gap-4 @3xl:grid-cols-3">
         {[["Physics Grand Prix", "Starts Oct 25", "violet", "2,300 registered"], ["Biology Olympiad", "Starts Nov 2", "green", "1,780 registered"], ["Spelling Bee Jr.", "Starts Nov 9", "gold", "940 registered"]].map(([n, d, t, r]) => (
-          <Card key={n}><IconBox icon={Medal} tone={t as Tone} /><p className="mt-3 font-bold">{n}</p><p className="text-sm text-muted-foreground">{r}</p><div className="mt-4 flex items-center justify-between"><Pill tone="gray"><Calendar className="h-3 w-3" />{d}</Pill><Btn size="sm">Register</Btn></div></Card>
+          <Card key={n}><IconBox icon={Medal} tone={t as Tone} /><p className="mt-3 font-bold">{n}</p><p className="text-sm text-muted-foreground">{r}</p><div className="mt-4 flex flex-wrap gap-2 items-center justify-between"><Pill tone="gray"><Calendar className="h-3 w-3" />{d}</Pill><Btn size="sm" disabled={registered.includes(n ?? "")} onClick={() => n && setRegistered([...registered, n])}>{registered.includes(n ?? "") ? "Registered" : "Register"}</Btn></div></Card>
         ))}
       </div>
     </AppFrame>
@@ -54,7 +58,7 @@ export function Leaderboard() {
     <AppFrame nav={studentNav} active="leaderboard" title="Leaderboard" subtitle="Week 42 · resets in 2d 14h">
       <div className="flex gap-2">{["School", "Regional", "National", "Friends"].map((t) => <button key={t} onClick={() => setTab(t)} className={cn("rounded-full px-4 py-1.5 text-sm font-semibold", tab === t ? "bg-primary text-primary-foreground" : "bg-card border")}>{t}</button>)}</div>
       <div className="mt-6 grid grid-cols-3 items-end gap-3">
-        {[1, 0, 2].map((k) => { const p = people[k]; const h = ["h-40", "h-32", "h-24"][k]; return (
+        {[1, 0, 2].map((k) => { const p = people[k]; if (!p) return null; const h = ["h-40", "h-32", "h-24"][k]; return (
           <div key={k} className="text-center"><Av name={p[0]} tone={p[1]} size={k === 0 ? 64 : 52} /><p className="mt-2 truncate text-sm font-bold">{p[0]}</p><p className="text-xs text-muted-foreground">{p[2].toLocaleString()} XP</p>
             <div className={cn("mt-2 grid place-items-start justify-center rounded-t-2xl pt-3", h, k === 0 ? "bg-goldgrad" : "bg-primary-soft")}>{k === 0 ? <Crown className="h-7 w-7 text-navy" /> : <span className="font-display text-2xl text-primary">{k + 1}</span>}</div></div>
         ); })}

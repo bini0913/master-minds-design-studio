@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Star, Play, Lock, Volume2, Crown } from "lucide-react";
 import { Av, Btn, useGo, type Tone } from "../ui";
 import { earlyNav } from "../navs";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 function EarlyFrame({ active, children, title }: { active: string; children: ReactNode; title: string }) {
@@ -13,8 +14,8 @@ function EarlyFrame({ active, children, title }: { active: string; children: Rea
         <div className="flex items-center gap-1 rounded-full bg-card px-4 py-2 text-lg font-extrabold text-gold shadow-card"><Star className="h-5 w-5 fill-current" />128</div>
       </header>
       <main className="flex-1 px-5 pb-5">{children}</main>
-      <nav className="sticky bottom-0 mx-4 mb-4 flex justify-around rounded-3xl bg-card p-2 shadow-elevated">
-        {earlyNav.map((n) => <button key={n.id} onClick={() => go(n.id)} className={cn("flex flex-col items-center gap-0.5 rounded-2xl px-3 py-2 text-[11px] font-bold", n.id === active ? "bg-primary text-primary-foreground" : "text-muted-foreground")}><n.icon className="h-6 w-6" />{n.label}</button>)}
+      <nav className="sticky bottom-0 mx-3 mb-3 flex overflow-x-auto rounded-2xl bg-card p-1.5 shadow-elevated">
+        {earlyNav.map((n) => <Button variant="ghost" key={n.id} onClick={() => go(n.id)} className={cn("flex h-auto min-w-14 shrink-0 flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-2 text-[10px] font-bold", n.id === active ? "bg-primary text-primary-foreground" : "text-muted-foreground")}><n.icon className="h-6 w-6" />{n.label}</Button>)}
       </nav>
     </div>
   );
@@ -22,10 +23,10 @@ function EarlyFrame({ active, children, title }: { active: string; children: Rea
 
 function Tile({ emoji, label, tone, onClick, locked }: { emoji: string; label: string; tone: Tone; onClick?: () => void; locked?: boolean }) {
   return (
-    <button onClick={onClick} className={cn("relative flex aspect-square flex-col items-center justify-center gap-2 rounded-3xl border-4 border-card shadow-card transition hover:-translate-y-1", `bg-${tone}-soft`, locked && "opacity-60")}>
+    <Button variant="ghost" disabled={locked} onClick={onClick} className={cn("relative flex h-auto aspect-square whitespace-normal flex-col items-center justify-center gap-2 rounded-3xl border-4 border-card shadow-card transition hover:-translate-y-1", `bg-${tone}-soft`, locked && "opacity-60")}>
       <span className="text-5xl">{emoji}</span><span className="text-sm font-extrabold">{label}</span>
       {locked && <Lock className="absolute right-3 top-3 h-4 w-4" />}
-    </button>
+    </Button>
   );
 }
 
@@ -46,7 +47,7 @@ export function EarlyGames() {
   return (
     <EarlyFrame active="early-games" title="Games">
       <div className="grid grid-cols-2 gap-4 @3xl:grid-cols-3">
-        {[["🧩", "Shape Match", "blue"], ["🐘", "Animal Sounds", "green"], ["🍎", "Fruit Count", "coral"], ["🚀", "Space Letters", "violet"], ["🎵", "Music Maker", "gold"], ["🏰", "Castle Maze", "gray"]].map(([e, l, t], i) => <Tile key={l} emoji={e} label={l} tone={t as Tone} locked={i === 5} onClick={() => go("early-quiz")} />)}
+        {([["🧩", "Shape Match", "blue"], ["🐘", "Animal Sounds", "green"], ["🍎", "Fruit Count", "coral"], ["🚀", "Space Letters", "violet"], ["🎵", "Music Maker", "gold"], ["🏰", "Castle Maze", "gray"]] as const).map(([e, l, t], i) => <Tile key={l} emoji={e} label={l} tone={t as Tone} locked={i === 5} onClick={() => go("early-quiz")} />)}
       </div>
     </EarlyFrame>
   );
@@ -81,7 +82,7 @@ export function EarlyVideos() {
 export function EarlyDiscover() {
   return (
     <EarlyFrame active="early-discover" title="Discover">
-      <div className="grid grid-cols-2 gap-4 @3xl:grid-cols-4">{[["🦋", "Bugs", "green"], ["🌋", "Volcanoes", "coral"], ["🐳", "Ocean", "blue"], ["🪐", "Planets", "violet"], ["🌱", "Plants", "green"], ["🦕", "Dinosaurs", "gold"], ["🌦️", "Weather", "blue"], ["🏔️", "Mountains", "gray"]].map(([e, l, t]) => <Tile key={l} emoji={e} label={l} tone={t as Tone} />)}</div>
+      <div className="grid grid-cols-2 gap-4 @3xl:grid-cols-4">{([["🦋", "Bugs", "green"], ["🌋", "Volcanoes", "coral"], ["🐳", "Ocean", "blue"], ["🪐", "Planets", "violet"], ["🌱", "Plants", "green"], ["🦕", "Dinosaurs", "gold"], ["🌦️", "Weather", "blue"], ["🏔️", "Mountains", "gray"]] as const).map(([e, l, t]) => <Tile key={l} emoji={e} label={l} tone={t as Tone} />)}</div>
     </EarlyFrame>
   );
 }
