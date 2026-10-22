@@ -65,6 +65,7 @@ export const earlyNav: NavItem[] = [
   { id: "early-games", label: "Games", icon: Gamepad2 },
   { id: "early-videos", label: "Videos", icon: Play },
   { id: "early-discover", label: "Discover", icon: Compass },
+  { id: "early-explore", label: "Explore", icon: Compass },
   { id: "early-collection", label: "Stickers", icon: Gem },
   { id: "early-profile", label: "Me", icon: User },
 ];
