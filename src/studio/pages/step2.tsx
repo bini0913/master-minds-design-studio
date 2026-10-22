@@ -1,9 +1,9 @@
 import { useState } from "react";
 import {
-  BookOpen, Brain, CalendarDays, Check, ChevronRight, Compass, Gamepad2, Heart, MessageCircle,
-  Mic, MicOff, Video, VideoOff, PhoneOff, Plus, Search, Send, Sparkles, Star, Target,
-  Trophy, Users, Volume2, Clock3, Play, ShieldCheck, Bell, Settings, BarChart3, FileText,
-  Wallet, Building2, UserRound, CircleHelp, RotateCcw, BookMarked, GraduationCap,
+  BookOpen, Brain, CalendarDays, Check, ChevronRight, Compass, Heart, MessageCircle,
+  Mic, MicOff, Video, VideoOff, PhoneOff, Plus, Send, Sparkles, Star, Target,
+  Trophy, Users, Clock3, Play, ShieldCheck, Settings, BarChart3, FileText,
+  Wallet, Building2, CircleHelp, BookMarked, GraduationCap,
 } from "lucide-react";
 import { AppFrame, Av, Bar, Btn, Card, IconBox, Pill, SectionTitle, Stat, useGo, type Tone } from "../ui";
 import { studentNav, earlyNav, staffNav } from "../navs";
