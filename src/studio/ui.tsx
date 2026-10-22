@@ -1,5 +1,6 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, type ReactNode, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import type { LucideIcon } from "lucide-react";
 import { Bell, Search, Sparkles } from "lucide-react";
 
@@ -19,13 +20,13 @@ const btn = {
   danger: "bg-destructive text-destructive-foreground hover:brightness-110",
 };
 export function Btn({
-  v = "primary", className, children, onClick, size = "md",
-}: { v?: keyof typeof btn; className?: string; children: ReactNode; onClick?: () => void; size?: "sm" | "md" | "lg" }) {
+  v = "primary", className, children, size = "md", ...props
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "size"> & { v?: keyof typeof btn; size?: "sm" | "md" | "lg" }) {
   const s = size === "sm" ? "h-8 px-3 text-xs" : size === "lg" ? "h-12 px-6 text-base" : "h-10 px-4 text-sm";
   return (
-    <button onClick={onClick} className={cn("inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all active:scale-[.98]", s, btn[v], className)}>
+    <Button variant="ghost" type="button" {...props} className={cn("inline-flex items-center justify-center gap-2 whitespace-normal rounded-xl font-semibold transition-all active:scale-[.98]", s, btn[v], className)}>
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -117,11 +118,11 @@ export function AppFrame({ nav, active, title, subtitle, children, role = "Stude
         <p className="mt-1 pl-10 text-[10px] uppercase tracking-widest text-navy-muted">{role}</p>
         <nav className="mt-6 space-y-1">
           {nav.map((n) => (
-            <button key={n.id + n.label} onClick={() => go(n.id)}
-              className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
+            <Button variant="ghost" key={n.id + n.label} onClick={() => go(n.id)}
+              className={cn("flex h-auto w-full justify-start items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition",
                 n.id === active ? "bg-primary text-primary-foreground shadow-glow" : "text-navy-muted hover:bg-navy-2 hover:text-navy-foreground")}>
               <n.icon className="h-4 w-4" /> {n.label}
-            </button>
+            </Button>
           ))}
         </nav>
       </aside>
@@ -135,17 +136,17 @@ export function AppFrame({ nav, active, title, subtitle, children, role = "Stude
             <Search className="h-3.5 w-3.5" /> Search anything…
           </div>
           {actions}
-          <button onClick={() => go("notifications")} className="relative grid h-9 w-9 place-items-center rounded-xl hover:bg-muted">
+          <Button variant="ghost" size="icon" title="Notifications" aria-label="Notifications" onClick={() => go("notifications")} className="relative shrink-0 grid h-9 w-9 place-items-center rounded-xl hover:bg-muted">
             <Bell className="h-4 w-4" /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-coral" />
-          </button>
-          <button onClick={() => go("profile")}><Av name="Amara Tesfaye" /></button>
+          </Button>
+          <Button variant="ghost" size="icon" title="Profile" aria-label="Profile" onClick={() => go("profile")}><Av name="Amara Tesfaye" /></Button>
         </header>
         <main className="flex-1 p-5">{children}</main>
-        <nav className="sticky bottom-0 flex justify-around border-t bg-card py-2 @3xl:hidden">
-          {nav.slice(0, 5).map((n) => (
-            <button key={n.id + n.label} onClick={() => go(n.id)} className={cn("flex flex-col items-center gap-0.5 text-[10px] font-medium", n.id === active ? "text-primary" : "text-muted-foreground")}>
+        <nav aria-label="Mockup navigation" className="sticky bottom-0 flex overflow-x-auto border-t bg-card py-2 @3xl:hidden">
+          {nav.map((n) => (
+            <Button variant="ghost" key={n.id + n.label} onClick={() => go(n.id)} className={cn("flex h-auto min-w-16 shrink-0 flex-col items-center gap-0.5 px-2 text-[10px] font-medium", n.id === active ? "text-primary" : "text-muted-foreground")}>
               <n.icon className="h-5 w-5" />{n.label}
-            </button>
+            </Button>
           ))}
         </nav>
       </div>
