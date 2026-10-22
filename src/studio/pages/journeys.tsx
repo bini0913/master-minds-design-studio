@@ -1,0 +1,33 @@
+import { useState } from "react";
+import { Bell, Check, CheckCheck, Clock3, Gamepad2, MessageCircle, Swords, Trophy, UserPlus, X, Zap, ChevronRight, RotateCcw } from "lucide-react";
+import { AppFrame, Av, Btn, Card, IconBox, Pill, SectionTitle, useGo, type Tone } from "../ui";
+import { studentNav } from "../navs";
+import { cn } from "@/lib/utils";
+
+type RequestItem={id:number;name:string;kind:"friend"|"room";detail:string;tone:Tone;status:"pending"|"accepted"|"declined"};
+const initial:RequestItem[]=[
+ {id:1,name:"Dawit Bekele",kind:"friend",detail:"Would like to add you as a friend",tone:"green",status:"pending"},
+ {id:2,name:"Liya Haile",kind:"room",detail:"Invited you to Physics Sprint · 10 questions",tone:"violet",status:"pending"},
+ {id:3,name:"Hana Girma",kind:"friend",detail:"Would like to add you as a friend",tone:"coral",status:"pending"},
+];
+
+export function SocialRequests() {
+ const go=useGo(); const [items,setItems]=useState(initial);
+ const update=(id:number,status:"accepted"|"declined")=>setItems(s=>s.map(x=>x.id===id?{...x,status}:x));
+ const pending=items.filter(x=>x.status==="pending").length;
+ return <AppFrame nav={studentNav} active="chat" title="Requests & invitations" subtitle="Friend requests and study-room invites in one place" actions={<Pill tone={pending?"coral":"green"}><Bell className="h-3 w-3"/>{pending} pending</Pill>}>
+  <div className="mx-auto max-w-3xl space-y-4"><Card><SectionTitle title="Needs your response"/><p className="mb-4 text-sm text-muted-foreground">Review each request. Accepted friends and room invitations should show clear feedback.</p>
+   {items.filter(x=>x.status==="pending").map(x=><div key={x.id} className="flex flex-wrap items-center gap-3 border-b py-4 last:border-0"><Av name={x.name} tone={x.tone} size={44}/><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><b className="text-sm">{x.name}</b><Pill tone={x.kind==="friend"?"blue":"violet"}>{x.kind==="friend"?"Friend request":"Study room"}</Pill></div><p className="mt-1 text-sm text-muted-foreground">{x.detail}</p><p className="mt-1 text-xs text-muted-foreground">Received recently</p></div><div className="flex gap-2"><Btn size="sm" onClick={()=>update(x.id,"accepted")}><Check className="h-4 w-4"/>{x.kind==="friend"?"Accept":"Join"}</Btn><Btn size="sm" v="outline" onClick={()=>update(x.id,"declined")}><X className="h-4 w-4"/>Decline</Btn></div></div>)}
+   {pending===0&&<div className="rounded-xl bg-success-soft p-5 text-center"><CheckCheck className="mx-auto h-7 w-7 text-success"/><p className="mt-2 font-semibold">You're all caught up</p><p className="text-sm text-muted-foreground">No pending requests or invitations.</p><Btn v="outline" size="sm" className="mt-3" onClick={()=>setItems(initial)}><RotateCcw className="h-3 w-3"/>Reset preview</Btn></div>}
+  </Card><Card><SectionTitle title="Recent decisions"/>{items.filter(x=>x.status!=="pending").length?items.filter(x=>x.status!=="pending").map(x=><div key={x.id} className="flex items-center gap-3 border-b py-3 last:border-0"><IconBox icon={x.status==="accepted"?Check: X} tone={x.status==="accepted"?"green":"gray"} size={34}/><div className="min-w-0 flex-1"><b className="text-sm">{x.name}</b><p className="text-xs text-muted-foreground">{x.kind==="friend"?"Friend request":"Room invitation"} {x.status}</p></div><Pill tone={x.status==="accepted"?"green":"gray"}>{x.status}</Pill></div>):<p className="text-sm text-muted-foreground">Your decisions will appear here.</p>}</Card></div>
+ </AppFrame>;
+}
+
+export function MultiplayerResults() {
+ const go=useGo(); const [review,setReview]=useState(false);
+ return <AppFrame nav={studentNav} active="leaderboard" title="Match results" subtitle="Physics Sprint · Room MM-4821">
+  <div className="mx-auto max-w-3xl space-y-4"><Card className="overflow-hidden border-0 bg-hero p-0 text-navy-foreground"><div className="p-6 text-center sm:p-8"><div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gold text-3xl text-navy"><Trophy className="h-8 w-8"/></div><Pill tone="gold">MATCH COMPLETE</Pill><h3 className="mt-3 font-display text-3xl font-extrabold">Great effort, Amara!</h3><p className="mt-2 text-sm text-navy-muted">You placed 2nd out of 4 players.</p><div className="mt-6 grid grid-cols-3 gap-3"><div className="rounded-xl bg-white/10 p-3"><b className="text-2xl">8/10</b><p className="text-xs text-navy-muted">Correct</p></div><div className="rounded-xl bg-white/10 p-3"><b className="text-2xl">840</b><p className="text-xs text-navy-muted">Points</p></div><div className="rounded-xl bg-white/10 p-3"><b className="text-2xl">+45</b><p className="text-xs text-navy-muted">XP earned</p></div></div></div></Card>
+  <Card><SectionTitle title="Final standings"/>{[["1","Liya Haile","9/10","920","gold"],["2","Amara Tesfaye","8/10","840","blue"],["3","Dawit Bekele","7/10","710","green"],["4","Hana Girma","6/10","640","coral"]].map(x=><div key={x[1]} className={cn("flex items-center gap-3 rounded-xl border-b p-3 last:border-0",x[1]==="Amara Tesfaye"&&"bg-primary/5")}><div className="grid h-8 w-8 place-items-center rounded-lg bg-muted text-sm font-bold">{x[0]}</div><Av name={x[1]} tone={x[4] as Tone}/><div className="min-w-0 flex-1"><b className="text-sm">{x[1]}</b><p className="text-xs text-muted-foreground">{x[2]} correct</p></div><b className="text-sm">{x[3]} pts</b></div>)}</Card>
+  <Card><SectionTitle title="Next steps"/><div className="grid gap-3 sm:grid-cols-2"><button onClick={()=>setReview(!review)} className="flex items-center gap-3 rounded-xl border p-3 text-left"><IconBox icon={MessageCircle}/><span className="flex-1"><b className="text-sm">Review missed questions</b><span className="block text-xs text-muted-foreground">Learn from the 2 questions missed</span></span><ChevronRight className="h-4 w-4"/></button><button onClick={()=>go("multiplayer-lobby")} className="flex items-center gap-3 rounded-xl border p-3 text-left"><IconBox icon={Swords} tone="violet"/><span className="flex-1"><b className="text-sm">Play another match</b><span className="block text-xs text-muted-foreground">Join a new room or invite friends</span></span><ChevronRight className="h-4 w-4"/></button></div>{review&&<div className="mt-4 rounded-xl bg-muted/60 p-4"><p className="text-sm font-semibold">Question review</p><p className="mt-1 text-sm">Revisit velocity vs. speed and interpreting distance-time graphs before your next round.</p><Btn size="sm" className="mt-3" onClick={()=>go("quiz-selection")}><Zap className="h-4 w-4"/> Practice these topics</Btn></div>}</Card></div>
+ </AppFrame>;
+}
