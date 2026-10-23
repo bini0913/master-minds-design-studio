@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, Brain, Trophy, Users, Bot, Check, Mail, Lock, User, GraduationCap, Sparkles } from "lucide-react";
 import { Btn, Card, IconBox, Logo, Pill, useGo } from "../ui";
+import { usePrototype } from "../prototype";
 import { cn } from "@/lib/utils";
 
 export function Landing() {
@@ -80,13 +81,17 @@ function Field({ icon: I, label, type = "text", ph }: { icon: typeof Mail; label
 
 export function Login() {
   const go = useGo();
+  const { feedback } = usePrototype();
+  const [role, setRole] = useState("Student");
+  const destinations: Record<string, string> = { Student: "upper-student-home", Teacher: "teacher-portal", Parent: "parent-dashboard", Admin: "admin-portal", Manager: "manager-dashboard", Finance: "finance-portal", "Owner demo": "owner-control" };
   return (
-    <AuthShell title="Welcome back" sub="Log in to continue your streak.">
+    <AuthShell title="Choose your workspace" sub="Demo role selection · no real authentication.">
+      <label className="block text-sm font-semibold">Preview role<select className="mt-2 h-11 w-full rounded-lg border bg-background px-3" value={role} onChange={e => setRole(e.target.value)}>{Object.keys(destinations).map(r => <option key={r}>{r}</option>)}</select></label>
       <Field icon={Mail} label="Email or phone" ph="amara@school.et" />
       <Field icon={Lock} label="Password" type="password" ph="••••••••" />
       <div className="flex justify-between text-xs"><label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> Remember me</label><span className="font-semibold text-primary">Forgot password?</span></div>
-      <Btn className="w-full" size="lg" onClick={() => go("student-dashboard")}>Log in</Btn>
-      <Btn className="w-full" v="outline" onClick={() => go("student-dashboard")}>Continue with Google</Btn>
+      <Btn className="w-full" size="lg" onClick={() => go(destinations[role] ?? "upper-student-home")}>Enter demo workspace</Btn>
+      <Btn className="w-full" v="outline" onClick={() => feedback("Google sign-in preview — not connected")}>Continue with Google</Btn>
       <p className="text-center text-sm text-muted-foreground">New here? <button className="font-semibold text-primary" onClick={() => go("signup")}>Create an account</button></p>
     </AuthShell>
   );
