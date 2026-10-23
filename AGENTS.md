@@ -10,5 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Keep the standalone design playground frontend-only with in-memory sample interactions; no existing app or backend connections are permitted.
-- Register each mockup in the typed studio page registry and render it through the shared navigation context; this keeps all screens individually selectable without real app routes.
+- Register each mockup in the typed studio registry and render it through shared navigation at /screens/$screenId; direct loads and browser history must work without recreating production routes.
 - Use container queries inside mockups so the studio's device preview width, rather than the browser width, determines their layouts.
