@@ -12,7 +12,7 @@ describe("Standalone studio page coverage", () => {
   });
 
   it("uses an individual implementation for every requested screen", () => {
-    expect(new Set(pages.map((page) => page.C)).size).toBe(49);
+    expect(new Set(pages.map((page) => page.C)).size).toBe(pages.length);
   });
 
   it("keeps all mockup navigation destinations selectable", () => {
