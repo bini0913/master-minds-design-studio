@@ -8,7 +8,7 @@ import * as K from "./pages/early";
 import * as Y from "./pages/system";
 import * as P from "./pages/step2";
 import * as J from "./pages/journeys";
-import * as U from "./pages/upper-student";
+import * as U from "./pages/upper-student-redesign";
 
 export type PageDef = { id: string; name: string; category: string; C: ComponentType };
 
