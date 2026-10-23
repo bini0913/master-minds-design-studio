@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ScreensScreenIdRouteImport } from './routes/screens.$screenId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScreensScreenIdRoute = ScreensScreenIdRouteImport.update({
+  id: '/screens/$screenId',
+  path: '/screens/$screenId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/screens/$screenId': typeof ScreensScreenIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/screens/$screenId': typeof ScreensScreenIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/screens/$screenId': typeof ScreensScreenIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/screens/$screenId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/screens/$screenId'
+  id: '__root__' | '/' | '/screens/$screenId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ScreensScreenIdRoute: typeof ScreensScreenIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/screens/$screenId': {
+      id: '/screens/$screenId'
+      path: '/screens/$screenId'
+      fullPath: '/screens/$screenId'
+      preLoaderRoute: typeof ScreensScreenIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ScreensScreenIdRoute: ScreensScreenIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
