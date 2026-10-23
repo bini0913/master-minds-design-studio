@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import {
   ArrowRight, BarChart3, BookOpen, Brain, CalendarDays, CheckCircle2, ChevronRight,
   Clock3, Flame, GraduationCap, LibraryBig, ListChecks, Play, Search, ShieldCheck,
@@ -38,7 +38,7 @@ const subjects = [
   { name: "Biology", detail: "Cell biology · Genetics", value: 86, tone: "green" as Tone, action: "topic-coverage" },
   { name: "Chemistry", detail: "Organic chemistry", value: 48, tone: "coral" as Tone, action: "topic-coverage" },
 ];
-function Heading({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
+function Heading({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: ReactNode }) {
   return <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-primary">{eyebrow}</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h2><p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{description}</p></div>{action}</div>;
 }
 function Workspace({ active, title, subtitle, children }: { active: string; title: string; subtitle: string; children: React.ReactNode }) {
